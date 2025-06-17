@@ -1,54 +1,90 @@
 # IndividualRacePerformanceEvaluator
-This repository aims to be an example of the application of the statistical-objective evaluation of basketball matches to the competitions of individual motorsport drivers and in particular F1
 
-# Individuazione delle variabili
-Iniziando con l'individuazione delle variabili si entra subito in contatto con il primo problema: cosa è una variabile all'interno di una gara?
+Il progetto **IndividualRacePerformanceEvaluator** propone un sistema di valutazione statistica per i piloti di motorsport (con particolare focus su Formula 1), ispirato alla formula "Valutazione di Lega" utilizzata nel basket. L’obiettivo è fornire un indicatore oggettivo delle prestazioni dei piloti gara per gara.
 
-## Definizione di variabile
-Andando per negazione, possiamo ciecamente dire che non è una variabilw all'interno della singola gara il mezzo utilizzato utilizzato per correre: in quanto non cambia durante la gara. Essendo lo stesso dall'inizio alla fine della gara non può essere una varibile di cui tenere conto.
+## 🎯 Obiettivi
+✅ Applicare un sistema di valutazione oggettivo alle prestazioni individuali dei piloti.  
+✅ Automatizzare la raccolta dati e il calcolo dei punteggi.  
+✅ Generare report settimanali tramite pipeline (GitHub Actions).  
 
-Quindi una variabile è una qualcosa di quantificabile può cambiare durante il corso della gare e che descrive, anche parzialmente, una gara di un pilota
+## 🏎️ Variabili considerate
 
-## Caratteristiche delle variabili
-Le variabili devono avere le seguenti caratteristiche:
-* Nome univoco
-* Unità di misura ben precisa
-* Individuali del singolo pilota
+| Variabile | Codice | Unità | Descrizione |
+|------------|--------|--------|-------------|
+| Posizione partenza | PP | Pos | Posizione in griglia |
+| Posizione arrivo | PA | Pos | Posizione finale |
+| Posizioni guadagnate | PG | ΔPos | PP - PA |
+| Sorpassi effettuati | SE | Sorp | **(Non disponibile direttamente in Fast-F1)** |
+| Sorpassi subiti | SS | Sorp | **(Non disponibile direttamente in Fast-F1)** |
+| Under-Cut riusciti | UC | Sorp | **(Non disponibile direttamente)** |
+| Contatti causati | CC | Cont | **(Non disponibile)** |
+| Contatti subiti | CS | Cont | **(Non disponibile)** |
+| Ritiri causati | RC | Rit | **(Stimabile solo manualmente o da note extra)** |
+| Ritiri subiti | RS | Rit | **(Stimabile solo manualmente o da note extra)** |
+| Giri al comando | GG | Giri | Numero giri al comando |
+| % giri al comando | GG% | % | GG / totale giri gara |
+| Giri completati | GC | Giri | Numero giri completati |
+| % giri completati | GC% | % | GC / totale giri gara |
+| Pit stop oltre media | PSE | Pit | **(Possibile confronto con media pit stop evento)** |
+| Penalità (numero) | PO | Pen | Numero penalità |
+| Penalità (sec) | POS | sec | Secondi di penalità totali |
 
+## ℹ️ Note sui dati
+Le seguenti variabili **non sono direttamente ottenibili da Fast-F1**:
+- Sorpassi effettuati/subiti (SE, SS)
+- Under-Cut riusciti (UC)
+- Contatti (CC, CS)
+- Ritiri causati/subiti (RC, RS)
 
-## Possibili variabili
-| Variabile                                             | Codice | Unità     | Tipologia | Descrizione                                                                              |
-|-------------------------------------------------------|--------|-----------|-----------|------------------------------------------------------------------------------------------|
-| Posizione partenza                                    | PP     | Pos       | Posizioni | Posizione in cui si trovava il pilota alla partenza del granpremio                       |
-| Posizione arrivo                                      | PA     | Pos       | Posizioni | Posizione in cui si trovava il pilota alla fine del granpremio                           |
-| Posizioni guadagnate                                  | PG     | Delta Pos | Posizioni | Posizioni guadagnate dal pilota --> PP - PA                                              |
-| Sorpassi effettuati                                   | SE     | Sorp      | Sorpassi  | Totale dei sorpassi effettuati dal pilota                                                |
-| Sorpassi subiti                                       | SS     | Sorp      | Sorpassi  | Totale dei sorpassi subiti dal pilota                                                    |
-| Sorpasso effettuato con Under-Cut                     | UC     | Sorp      | Sorpassi  | Punto aggiuntivo in caso di Under Cut effettuato correttamente                           |
-| Contatti causati                                      | CC     | Cont      | Contatti  | Totale dei contatti con altri piloti causati dal pilota                                  |
-| Contatti subiti                                       | CS     | Cont      | Contatti  | Totale dei contatti con altri piloti subiti dal pilota                                   |
-| Ritiri causati                                        | RC     | Rit       | Ritiri    | Punteggio negativo in caso di ritiro causato da un errore del pilota                     |
-| Ritiri subiti                                         | RS     | Rit       | Ritiri    | Punteggio negativo in caso di ritiro non causato da un errore del pilota                 |
-| Giri alla guida del granpremio                        | GG     | Giri      | Giri      | Totale giri effettuati al comando del granpremio dal pilota                              |
-| Giri alla guida del granpremio/totale giri completati | GG%    | %Giri     | Giri      | Percentuale dei giri effettuati al comando del granpremio sul totale dei giri effettuati |
-| Giri completati del granpremio                        | GC     | Giri      | Giri      | Totale giri effettuati nel granpremio dal pilota                                         |
-| Giri completati del granpremio/totale giri granpremio | GC%    | %Giri     | Giri      | Percentuale dei giri effettuati dal pilota sul totale dei giri del granpremio            |
-| Pit Stop effettuati oltre la media                    | PSE    | Pit       | PitStop   |                                                                                          |
-| Penalità ottenute                                     | PO     | Pen       | Penalità  |                                                                                          |
-| Penalità ottenute in secondi                          | POS    | sec       | Penalità  |                                                                                          |
+👉 **Approccio**: Queste metriche potranno essere aggiunte manualmente o con fonti esterne (es. FIA race notes). Il sistema è progettato per integrarle successivamente.
 
-## Applicazioni nelle formule
-### Formula "Valutazione di Lega"
-La formula utilizzata attualmente dalla FIP è detta "Valutazione di Lega". Andando a convertire i codici delle variabili del basket con quelle precedentemente indentificate la formula diventa:
+## 📈 Formula di valutazione (prima versione)
 
+```python
+Valutazione = (PP * 0.75 + PG) + (SE - SS + UC) - (CC * 1.25) \
+              - (RC + RS) + GG + GC - (PO + POS/10)
 ```
-Valutazione di Lega = SE - SS + UC - CC + CS - RC - RS + GG + GC
+👉 Nota: La formula verrà calibrata in base alle variabili effettivamente disponibili.
+
+⚙️ Architettura
+- Python + Fast-F1: per scaricare e analizzare i dati
+- Jinja2 + pdfkit / WeasyPrint: per creare i report
+- GitHub Actions: per pipeline automatizzate (update settimanale e report)
+
+🚀 Come iniziare
+1️⃣ Installa i requisiti:
+
+```python
+pip install -r requirements.txt
 ```
+2️⃣ Esegui l’analisi per un gran premio:
 
-La formula creata è una pura riscrittura della "Valutazione di Lega" e non tiene conto della proporzionalità sui giri effettuati, non del fatto che ogni tipo di contatto è ritenibile come negativo o della posizione di partenza e di arrivo.
-
-### Formula "Valutazione di Lega" ponderata
-
+```python
+python -m src.evaluator --year 2024 --gp "Monaco"
 ```
-Valutazione di Lega = (PP * 0.75 + PG) + (SE - SS + UC) - (CC * 1.25 - PP + RO + RD + AS - FF + FS + SD - SS
+3️⃣ Genera un report:
+
+```python
+python -m src.report_generator --year 2024 --gp "Monaco"
+```
+🤖 Pipeline automatica
+GitHub Actions esegue settimanalmente:
+
+- Aggiornamento dei dati dell'ultima gara
+- Calcolo valutazioni
+- Generazione e upload del report
+
+📄 Licenza
+Questo progetto è distribuito sotto licenza MIT.
+
+---
+
+## 🛠️ Requisiti (requirements.txt)
+
+```txt
+fastf1
+pandas
+jinja2
+weasyprint
+matplotlib
 ```
